@@ -4,6 +4,7 @@
 """
 from fastapi import FastAPI
 import re
+from decimal import Decimal, ROUND_HALF_UP
 
 app = FastAPI()
 
@@ -29,7 +30,7 @@ class CurrencyExchangeService:
             }
         }
 
-    def validate_amount(self, amount):
+    def validate_amount(self, amount: str) -> bool:
         # validate input amount w/ or w/o separator 
         if ',' in amount:
             pattern = r"^([1-9]\d{0,2}|0)(,\d{3})*(\.\d+)?$"
@@ -37,8 +38,32 @@ class CurrencyExchangeService:
             pattern = r"^([1-9]\d*|0)(\.\d+)?$"
         return True if re.match(pattern, amount) else False
     
-    def convert(self, source, target, amount):
-        pass
+    def round(self, amount: Decimal, places: int) -> Decimal:
+        # round half up method
+        return amount.quantize(Decimal(f"0.{'0'*places}"), rounding=ROUND_HALF_UP)
+    
+    def convert(self, source: str, target: str, amount: str) -> str:
+        # validate source/target
+        if (source not in self.rate_reference['currencies']) or (target not in self.rate_reference['currencies'][source]):
+            print(source, target, amount)
+            raise ValueError('Unrecognized curreny option')
+        
+        # validate input amount
+        if not self.validate_amount(amount):
+            raise ValueError('Invalid input amount')
+        
+        # round input number
+        amount = Decimal(amount.replace(',', ''))
+        amount = self.round(amount, 2)
+
+        # convert
+        rate = Decimal(str(self.rate_reference['currencies'][source][target]))
+        converted_amount = rate * amount
+
+        # round converted amount
+        converted_amount = self.round(converted_amount, 2)
+        
+        return format(converted_amount, ',')
 
 currency_service = CurrencyExchangeService()
 
