@@ -3,29 +3,13 @@
 @author: taylor.fu
 """
 import re
+import json
 from decimal import Decimal, ROUND_HALF_UP
 
 class CurrencyExchangeService:
     def __init__(self):
-        self.rate_reference = {
-            "currencies": {
-                "TWD": {
-                    "TWD": 1,
-                    "JPY": 3.669,
-                    "USD": 0.03281
-                },
-                "JPY": {
-                    "TWD": 0.26956,
-                    "JPY": 1,
-                    "USD": 0.00885
-                },
-                "USD": {
-                    "TWD": 30.444,
-                    "JPY": 111.801,
-                    "USD": 1
-                }
-            }
-        }
+        with open('exchange_rate.json', 'r') as f:
+            self.rate_reference = json.loads(f.read())
 
     def validate_amount(self, amount: str) -> bool:
         # validate input amount w/ or w/o separator 
