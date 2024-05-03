@@ -74,3 +74,11 @@ def test_zero_heading():
     response = client.get(f"/convert_currency?source={source}&target={target}&amount={amount}")
     assert response.status_code == 200
     assert response.json() == {"msg": "failed: Invalid input amount", "amount": None}
+
+def test_large_amount():
+    source = "USD"
+    target = "JPY"
+    amount = "999999999999999999999999999999999999999999999" # too rich to cause this error
+    response = client.get(f"/convert_currency?source={source}&target={target}&amount={amount}")
+    assert response.status_code == 200
+    assert response.json() == {"msg": "failed: Quantizing error", "amount": None}

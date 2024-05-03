@@ -21,7 +21,10 @@ class CurrencyExchangeService:
     
     def round(self, amount: Decimal, places: int) -> Decimal:
         # round half up method
-        return amount.quantize(Decimal(f"0.{'0'*places}"), rounding=ROUND_HALF_UP)
+        try:
+            return amount.quantize(Decimal(f"0.{'0'*places}"), rounding=ROUND_HALF_UP)
+        except Exception as e:
+            raise ValueError('Quantizing error')
     
     def convert(self, source: str, target: str, amount: str) -> str:
         # validate source/target
