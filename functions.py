@@ -14,7 +14,7 @@ class CurrencyExchangeService:
     def validate_amount(self, amount: str) -> bool:
         # validate input amount w/ or w/o separator 
         if ',' in amount:
-            pattern = r"^([1-9]\d{0,2}|0)(,\d{3})*(\.\d+)?$"
+            pattern = r"^(([1-9]\d{0,2})(,\d{3})*|0)(\.\d+)?$"
         else:
             pattern = r"^([1-9]\d*|0)(\.\d+)?$"
         return True if re.match(pattern, amount) else False
