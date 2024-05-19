@@ -3,13 +3,11 @@
 @author: taylor.fu
 """
 import re
-import json
 from decimal import Decimal, ROUND_HALF_UP
 
 class CurrencyExchangeService:
-    def __init__(self):
-        with open('exchange_rate.json', 'r') as f:
-            self.rate_reference = json.loads(f.read())
+    def __init__(self, data):
+        self.rate_reference = data
 
     def validate_amount(self, amount: str) -> bool:
         # validate input amount w/ or w/o separator 

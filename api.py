@@ -2,11 +2,16 @@
 """
 @author: taylor.fu
 """
+import json
 from fastapi import FastAPI
 from functions import CurrencyExchangeService
 
 app = FastAPI()
-currency_service = CurrencyExchangeService()
+
+with open('exchange_rate.json', 'r') as f:
+    data = json.loads(f.read())
+
+currency_service = CurrencyExchangeService(data)
 
 @app.get('/convert_currency')
 def convert_currency(source: str, target: str, amount: str) -> dict:
